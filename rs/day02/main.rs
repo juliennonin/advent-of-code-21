@@ -1,28 +1,24 @@
 
-fn part1(course: &Vec<&str>) -> usize {
+fn part1(course: &Vec<(&str, usize)>) -> usize {
     let (mut h, mut d) = (0, 0);
-    for line in course {
-        let mut split = line.split_whitespace();
-        let (direction, x): (&str, usize) = (split.next().unwrap(), split.next().unwrap().parse().unwrap());
-        match direction {
-            "forward" => {h += x},
-            "down" => {d += x},
-            "up" => {d -= x},
+    for (direction, x) in course {
+        match *direction {
+            "forward" => h += x,
+            "down" => d += x,
+            "up" => d -= x,
             _ => (),
         }
     }
     h * d
 }
 
-fn part2(course: &Vec<&str>) -> usize {
+fn part2(course: &Vec<(&str, usize)>) -> usize {
     let (mut h, mut d, mut aim) = (0, 0, 0);
-    for line in course {
-        let mut split = line.split_whitespace();
-        let (direction, x): (&str, usize) = (split.next().unwrap(), split.next().unwrap().parse().unwrap());
-        match direction {
+    for (direction, x) in course {
+        match *direction {
             "forward" => {h += x; d += aim * x},
-            "down" => {aim += x},
-            "up" => {aim -= x},
+            "down" => aim += x,
+            "up" => aim -= x,
             _ => (),
         }
     }
@@ -30,8 +26,11 @@ fn part2(course: &Vec<&str>) -> usize {
 }
 
 fn main() {
-    let course: Vec<&str> = include_str!("input.txt")
-        .lines().collect();
+    let course: Vec<(&str, usize)> = include_str!("input.txt")
+        .lines()
+        .map(|line| line.split_once(" ").unwrap())
+        .map(|line| (line.0, line.1.parse().unwrap()))
+        .collect();
     
     println!("Part 1 — {:?}", part1(&course));
     println!("Part 2 — {:?}", part2(&course));
