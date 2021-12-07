@@ -1,2 +1,10 @@
 .ipynb_checkpoints
 main
+
+
+# ignore all
+*
+# unignore all with extensions
+!*.*
+# unignore all dirs
+!*/
