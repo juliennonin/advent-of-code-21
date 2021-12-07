@@ -12,8 +12,9 @@ fn cost_part2(h: &Vec<isize>, pos: isize) -> usize {
 }
 
 fn main() {
-    let h: Vec<isize> = include_str!("../data/day07.txt").trim().split(',')
-    .map(|x| x.parse().unwrap()).collect();
+    let h: Vec<isize> = include_str!("../data/day07.txt")
+        .trim().split(',')
+        .map(|x| x.parse().unwrap()).collect();
     let n = h.len() as isize;
     
 
