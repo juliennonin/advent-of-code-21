@@ -11,7 +11,7 @@ def main(counts, days, period):
     """
     assert period <= len(counts)
     for _ in range(0, days):
-        counts[PERIOD] += counts[0]
+        counts[period] += counts[0]
         counts = np.roll(counts, -1)
     return counts
 
