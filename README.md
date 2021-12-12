@@ -7,7 +7,7 @@ Yet another aoc repository! An opportunity for me to start learning Rust :crab:!
 While in part 1 each element `x[i]` has to be compared with its neighbour `x[i+1]`, in part 2 it has to be compared with its next-next-next-door neighbour `x[i+3]`!
 
 ```
-      .. .'   .  ~     .  ~      .         ..''''   2
+ .      ..    .  ~     .  ~      .         ..''''   2
 .. ..  ..              ~ .   .' .         :         3
 '     ..       .   .. .   .     .'    ....'         4
            .'   .  . .  .     ..|\..''              5
@@ -35,4 +35,7 @@ where $\bar x$ denotes the mean of the The final step is to note that $\#\{i \mi
 
 ```
 .                   .     :   ''  ''''..     '.    10
+.     .  .  ..     .   .  :             '..'. :    11
+  ~            .     ..          :'''..   ..' :    12
 ```
+Recursion is your friend.
