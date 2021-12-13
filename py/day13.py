@@ -10,13 +10,13 @@ def parse_dots(data_dots):
     ))
 
 def parse_instruction(instruction):
-    axis, thresh = instruction.strip("fold along").split("=")
+    axis, thresh = instruction.removeprefix("fold along ").split("=")
     axis = 0 if axis == "x" else 1
     return int(thresh), axis
 
 def save_paper_svg(paper_set, filename):
-    max_x = max(paper_set, key=lambda x: x[0])[0]
-    max_y = max(paper_set, key=lambda x: x[1])[1]
+    max_x = max(coords[0] for coords in paper_set)
+    max_y = max(coords[1] for coords in paper_set)
     paper = np.zeros((max_y + 1, max_x + 1), dtype=bool)
     for x, y in paper_set:
         paper[y, x] = True
