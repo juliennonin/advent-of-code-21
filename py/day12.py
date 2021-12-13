@@ -23,12 +23,12 @@ def number_of_paths(cave, path, adj, can_visited_twice):
 
     Args:
         cave (node): current cave
-        path (list of nodes): already visited caves (from the end)
+        path (list of nodes): already visited small caves (from the end)
         adj (dict [node]: list[nodes]): adjacency map of the cave system
         can_visited_twice (bool): True if a small cave can be visited twice,
                                   False otherwise
     """
-    if cave.islower() and cave in path: 
+    if cave in path: 
         # this small cave has already been visited 
         if cave == END or not can_visited_twice:
             # it is not allowed anymore to visit a small cave twice
@@ -40,10 +40,11 @@ def number_of_paths(cave, path, adj, can_visited_twice):
         # print('start,'+','.join(reversed(path)))
         return 1
     
-    new_path = path + [cave]
+    if cave.islower():
+        path.add(cave)
     n_paths_from_cave = 0
     for prev in adj[cave]:
-        n_paths_from_cave += number_of_paths(prev, new_path, adj, can_visited_twice)
+        n_paths_from_cave += number_of_paths(prev, path.copy(), adj, can_visited_twice)
     return n_paths_from_cave
 
 # %%
@@ -52,8 +53,8 @@ if __name__ == "__main__":
         data = f.read().splitlines()
     adj = adjacency_map(data)
 
-    part1 = number_of_paths(END, [], adj, False)
-    part2 = number_of_paths(END, [], adj, True)
+    part1 = number_of_paths(END, set(), adj, False)
+    part2 = number_of_paths(END, set(), adj, True)
 
     print("Part 1 —", part1)
     print("Part 2 —", part2)
