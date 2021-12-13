@@ -39,3 +39,7 @@ where $\bar x$ denotes the mean of the The final step is to note that $\#\{i \mi
   ~            .     ..          :'''..   ..' :    12
 ```
 Recursion is your friend.
+```
+..    .     ...     '        ..''      ''' ...:    13
+```
+![](img/day13.svg)
