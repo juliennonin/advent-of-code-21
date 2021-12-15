@@ -36,10 +36,15 @@ where $\bar x$ denotes the mean of the The final step is to note that $\#\{i \mi
 ```
 .                   .     :   ''  ''''..     '.    10
 .     .  .  ..     .   .  :             '..'. :    11
-  ~            .     ..          :'''..   ..' :    12
+  ~            .     ..  :       :'''..   ..' :    12
 ```
 Recursion is your friend.
 ```
-..    .     ...     '        ..''      ''' ...:    13
+  ..    .     ...   '  .'    ..''      ''' ...:    13
 ```
 ![](img/day13.svg)
+```
+         .  .         : ...''  ..':   ....'        14
+             .   .    :' ...'''    '''             15
+```
+![](img/day15.svg)
