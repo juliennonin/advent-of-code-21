@@ -48,14 +48,10 @@ def expand_no_memory(A, N, M):
     return ArrayExpanded(A, N, M)
 
 def neighbors(i, j, n, m):
-    if i > 0:
-        yield i - 1, j
-    if j > 0:
-        yield i, j - 1
-    if i < n - 1:
-        yield i + 1, j
-    if j < m - 1:
-        yield i, j + 1
+    for δi, δj in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
+        ii, jj = i + δi, j + δj
+        if 0 <= ii < n and 0 <= jj < m:
+            yield ii, jj
 
 # %%
 def lowest_risk_path(risk):
