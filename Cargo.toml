@@ -1,0 +1,33 @@
+[package]
+name = "advent-of-code-2021"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+itertools = "0.10.2"
+
+[[bin]]
+name = "day01"
+path = "./rs/day01.rs"
+
+[[bin]]
+name = "day02"
+path = "./rs/day02.rs"
+
+
+[[bin]]
+name = "day06"
+path = "./rs/day06.rs"
+
+[[bin]]
+name = "day07"
+path = "./rs/day07.rs"
+
+
+[[bin]]
+name = "day13"
+path = "./rs/day13.rs"
+
+[[bin]]
+name = "day14"
+path = "./rs/day14.rs"

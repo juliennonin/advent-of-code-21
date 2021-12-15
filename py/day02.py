@@ -29,7 +29,7 @@ def part2(course):
 
 # %%
 if __name__ == "__main__":
-    with open('input.txt', 'r') as f:
+    with open("../data/day02.txt", 'r') as f:
         course = f.read().splitlines()
 
     x1, z1 = part1(course)

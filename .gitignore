@@ -1,11 +1,12 @@
-# ignore all
-*
-# unignore all with extensions
-!*.*
-# unignore all dirs
-!*/
+
+# # ignore all
+# *
+# # unignore all with extensions
+# !*.*
+# # unignore all dirs
+# !*/
 
 .ipynb_checkpoints
-main
 data/day*_test.txt
 .vscode
+target/
