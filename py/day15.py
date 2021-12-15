@@ -34,7 +34,7 @@ class ArrayExpanded():
         return (value - 1) % 9 + 1
 
 # %%
-def expand(A, N, M):
+def _expand(A, N, M):
     n, m = A.shape
     B = np.tile(A, (N, M))
     for i in range(n * N):
@@ -60,61 +60,28 @@ def neighbors(i, j, n, m):
 # %%
 def lowest_risk_path(risk):
     n, m = risk.shape
-    NOT_VISITED = -1
-    cost = np.zeros(risk.shape) + NOT_VISITED
-    cost[0, 0] = 0
     queue = [(0, 0, 0)]
     predecessor = {}
 
     while queue:
         current_cost, x, y = queue.pop(0)
-        # if x == n - 1 and y == m - 1:
-            # return current_cost
+        if x == n - 1 and y == m - 1:
+            return current_cost
         for i, j in neighbors(x, y, n, m):
-            if cost[i, j] == NOT_VISITED:
-            # if not (i, j) in predecessor:
+            if not (i, j) in predecessor:
                 new_cost = risk[i, j] + current_cost
-                cost[i, j] = new_cost
                 bisect.insort(queue, (new_cost, i, j))
                 predecessor[(i, j)] = (x, y)
-    return cost, predecessor
-#%%
-def get_xy(prec, n, m):
-    e = (n-1, m-1)
-    x, y = [m-1], [n-1]
-    while e in prec:
-        e = prec[e]
-        x.append(e[1])
-        y.append(e[0])
-    return x, y
-# %%
-# if __name__ == "__main__":
-with open("../data/day15.txt", "r") as f:
-    chitons_map = np.array([list(map(int, list(line))) for line in f.read().splitlines()])
-# chitons_map = np.array([[4, 1, 20, 1, 1, 1], [5, 1, 20, 1, 20, 1], [5, 1, 20, 1, 20, 1], [5, 1, 1, 1, 20, 1]])
-
-part1, pred1 = lowest_risk_path(chitons_map)
-xx = expand_no_memory(chitons_map, 5, 5)
-part2, pred2 = lowest_risk_path(xx)
-
-
-plt.figure(figsize=(16, 8))
-plt.subplot(121)
-plt.imshow(np.where(part1 == -1, np.nan, part1), cmap="inferno")
-plt.plot(*get_xy(pred1, *chitons_map.shape), '-', c="white")
-plt.axis("off")
-
-plt.subplot(122)
-plt.imshow(np.where(part2 == -1, np.nan, part2), cmap="inferno")
-plt.plot(*get_xy(pred2, *xx.shape), '-', c="white")
-plt.axis("off")
-plt.tight_layout()
-
-plt.savefig("../img/day15.svg"),  #bbox_inches='tight')
-plt.show()
-
-
-# print("Part 1 —", part1)
-# print("Part 2 —", part2)
 
 # %%
+if __name__ == "__main__":
+    with open("../data/day15.txt", "r") as f:
+        chitons_map = np.array([list(map(int, list(line))) for line in f.read().splitlines()])
+    # chitons_map = np.array([[4, 1, 20, 1, 1, 1], [5, 1, 20, 1, 20, 1], [5, 1, 20, 1, 20, 1], [5, 1, 1, 1, 20, 1]])
+
+    part1 = lowest_risk_path(chitons_map)
+    part2 = lowest_risk_path(expand_no_memory(chitons_map, 5, 5))
+
+    print("Part 1 —", part1)
+    print("Part 2 —", part2)
+
