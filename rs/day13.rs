@@ -12,32 +12,30 @@ impl Coord {
     }
 
     fn symmetric_along_axis(&self, fold: &Fold) -> Self {
-        if fold.axis == 0 && self.0 > fold.pos {
-            return Coord(2 * fold.pos - self.0, self.1);
-        } else if fold.axis == 1 && self.1 > fold.pos {
-            return Coord(self.0, 2 * fold.pos - self.1);
-        } else {
-            return Coord(self.0, self.1);
+        match fold {
+            Fold::Left(pos) if self.0 > *pos => Self(2 * pos - self.0, self.1),
+            Fold::Up(pos) if self.1 > *pos => Self(self.0, 2 * pos - self.1),
+            _ => Self(self.0, self.1)
         }
     }
 }
 
 #[derive(Clone, Copy, Debug)]
-struct Fold {
-    axis: u8,
-    pos: i16,
+enum Fold {
+    Up(i16),
+    Left(i16),
 }
 
 impl Fold {
     fn from_str(s: &str) -> Self {
-        let (xy, pos) = s.strip_prefix("fold along ").unwrap().split_once("=").unwrap();
-        let axis = match xy {
-            "x" => 0,
-            "y" => 1,
-            other => panic!("Must be either 'x' or 'y' but not {:?}", other)
-        };
+        let (xy, pos) = s.strip_prefix("fold along ")
+            .unwrap().split_once("=").unwrap();
         let pos = pos.parse().unwrap();
-        Self{axis, pos}
+        match xy {
+            "x" => Self::Left(pos),
+            "y" => Self::Up(pos),
+            other => panic!("Must be either 'x' or 'y' but not {:?}", other)
+        }
     }
 }
 
@@ -55,9 +53,12 @@ fn fold_paper(paper: &HashSet<Coord>, fold: &Fold) -> HashSet<Coord> {
 }
 
 fn main() {
-    let (data_dots, instructions) = include_str!("../data/day13.txt").trim().split_once("\n\n").unwrap();
-    let mut data_dots: HashSet<Coord> = data_dots.split("\n").map(Coord::from_str).collect();
-    let instructions: Vec<Fold> = instructions.split("\n").map(Fold::from_str).collect();
+    let (data_dots, instructions) = include_str!("../data/day13.txt")
+        .trim().split_once("\n\n").unwrap();
+    let mut data_dots: HashSet<Coord> = data_dots.split("\n")
+        .map(Coord::from_str).collect();
+    let instructions: Vec<Fold> = instructions.split("\n")
+        .map(Fold::from_str).collect();
 
     let part1 = fold_paper(&data_dots, &instructions[0]).len();
     
