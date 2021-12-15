@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use itertools::Itertools;
 use std::fmt;
 
 #[derive(Hash, Eq, PartialEq, Copy, Clone)]
@@ -28,11 +29,7 @@ impl fmt::Debug for Pair {
 
 //
 fn polymer_to_pairs(polymer: &str) -> HashMap<Pair, usize> {
-    let mut counts = HashMap::<Pair, usize>::new();
-    for i in 0..(polymer.len() - 1) {
-        *counts.entry(Pair::from_str(&polymer[i..i+2])).or_insert(0) += 1;
-    }
-    counts
+    polymer.chars().tuple_windows().map(|(a, b)| Pair(a, b)).counts()
 }
 
 fn count_elements(pairs: &HashMap<Pair, usize>, first: char) ->  HashMap<char, usize> {
