@@ -48,3 +48,47 @@ Recursion is your friend.
              .   .    :' ...'''    '''             15
 ```
 ![](img/day15.svg)
+```
+'.'.            :'. ....'                          16
+   :            :  '                               17
+```
+Let `vx[n]` be the horizontal velocity at step `n` and `x[n]` the horizontal position at step `n`. Similarly let `vy[n]` and `y[n]` be the vertical velocity and position at step `n`. The landing zone is all points inside the rectangle `(xmin, ymin), (xmax, ymax)`.
+
+Starting at `(x[0], y[0]) = (0, 0)`, a valid launch with initial velocity `(vx[0], vy[0])` is such that there exists at least one step `n` for which `xmin ≤ x[n] ≤ xmax` and `ymin ≤ x[n] ≤ ymax`. The velocities are defined as `vy[n+1] = vy[n] - 1` and `vx[n+1] = max(0, vx[n] - 1)`. The positions are moreover recursively defined as `y[n+1] = y[n] + vy[n]` and `x[n+1] = x[n] + vx[n]`. Explicitly, we thus have 
+* `vy[n] = vy[0] - n` for all `n`, and
+* `vx[n] = vx[0] - n` if `n ≤ vx[0]`; 0 otherwise.
+
+And for the positions:
+* `y[n] = n⋅vy[0] - n(n - 1)/2` for all `n`,
+* `x[n] = n⋅vx[0] - n(n - 1)/2` if `n ≤ vx[0]`,
+* `x[n] = vx[0]² -  vx[0](vx[0] - 1)/2 = vx[0](vx[0] + 1)/2` otherwise.
+
+In the following we assume that `xmax > xmin > 0` and `ymin < ymax < 0`.
+
+#### **Part 1**
+In part 1, the goal is to determine the maximum vertical position reachable by a valid launch. For this end, notice that:
+* If `vy[0] ≤ 0`, the maximum vertical position is 0. We thus consider positive initial velocity.
+* `vy[n]` is positive as long as `n ≤ vy[0]`. Thus the position `y[n]` starts decreasing after this turning point. The maximum value is therefore `y[vy[0]] = vy[0](vy[0] + 1)/2`.
+* The vertical position is symmetric at its turning point: when the position becomes decreasing, it takes back exactly the same values in the increasing part of the trajectory. Indeed `y[vy[0] - k] = y[vy[0] + k - 1]`.
+* In particular `y[2⋅vy[0] + 1] = y[0]`. This means that at step `2⋅vy[0] + 1`, the vertical position is zero and the velocity is `-vy[0]-1`. At the next step the position will this be `-vy[0]-1`.
+
+Hence, the highest launch is the one for which `-vy[0]-1` is the last row of the landing zone. That is `vy[0] = - ymin - 1`. The highest vertical position of this launch is thus `(- ymin - 1)(- ymin) / 2 = ymin(ymin + 1) / 2`.
+
+#### **Part 2**
+We want here to list all the possible valid launches. For this, we need bounds on the minimum and maximum possible velocities to check. It is important to note that `x` and `y` are decoupled, so we can separate them in our thinking.
+
+* At a certain rank, `x` remains at `vx[0](vx[0] + 1)/2`. Then, this maximum value should be larger than `xmin`. Solving the equation gives a lower bound on `vx[0]` which is `sqrt(2⋅xmin + 1/4) - 1/2`. The higher bound is simply `xmax`. (When `vx[0] = xmax`, `x[1] = xmax` and the probe can potentially lands in the landing zone).
+* For the `y` velocity, we have already found in part 1 that the higher bound is `-ymin - 1`. And the lower bound is  simply `ymin`.
+
+Now that we have bounded the initial velocities (`sqrt(2⋅xmin + 1/4) - 1/2 ≤ vx[0] ≤ xmax` and `ymin <= vy[0] ≤ -ymin -1`), we can test every possible launch configuration and check it its land in the landing zone.
+> We can reduce the number of configurations to be checked by noticing that every initial velocities `(vx[0], vy[0])` for which `xmin ≤ vx[0] ≤ xmax` and `ymin ≤ vy[0] ≤ ymax` will land in the landing zone after the first step! There are as many of these kind of cheated throws as there are slots in the landing zone, that is `(ymax - ymin + 1)(xmax - xmin + 1)`. So we can discard them and focus on these bounds:
+> * `sqrt(2⋅xmin + 1/4) - 1/2 ≤ vx[0] ≤ xmin`
+> * `ymax <= vy[0] ≤ -ymin -1`
+
+Instead of simulate all launches, we can leverage the explicit definitions of the positions. Indeed recall that a launch is valid if and only if there exists at least one `n` that satisfies `xmin ≤ x[n] ≤ xmax` and `ymin ≤ x[n] ≤ ymax`. Carefully, solving the two inequalities for `n`, gives:
+* `n` should be between `vx[0] + 1/2 + sqrt[(vx[0] + 1/2)² - 2⋅xmin]` and "idem with" `xmax`,
+* `n` should be between `vy[0] + 1/2 - sqrt[(vy[0] + 1/2)² - 2⋅ymax]` and "idem with" `ymin`.
+Checking that these two intervals overlap is straightforward. And if it is the case, the launch is valid!
+```
+   :          ..'                                  18
+```
