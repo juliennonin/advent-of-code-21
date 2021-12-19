@@ -6,7 +6,7 @@ fn nb_increases(depths: &Vec<usize>, shift: usize) -> usize {
 }
 
 fn main() {
-    let depths: Vec<usize> = include_str!("input.txt")
+    let depths: Vec<usize> = include_str!("../data/day01.txt")
         .lines()
         .map(|x| x.parse().unwrap()) // filter_map(|x| x.unwrap().parse().ok())
         .collect();

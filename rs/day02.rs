@@ -26,7 +26,7 @@ fn part2(course: &Vec<(&str, usize)>) -> usize {
 }
 
 fn main() {
-    let course: Vec<(&str, usize)> = include_str!("input.txt")
+    let course: Vec<(&str, usize)> = include_str!("../data/day02.txt")
         .lines()
         .map(|line| line.split_once(" ").unwrap())
         .map(|line| (line.0, line.1.parse().unwrap()))
