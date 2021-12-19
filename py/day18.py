@@ -49,8 +49,6 @@ class Literal(SnailNode):
     def __init__(self, n):
         assert isinstance(n, int)
         self.val = n
-        self.parent = None
-        self.side = None
         super().__init__()
     
     @property
@@ -108,8 +106,7 @@ class SnailNb(SnailNode):
         self.right.parent = self
         self.right.side = Side.RIGHT
 
-        self.parent = None
-        self.side = None
+        super().__init__()
         self._depth = 1 + max(self.right.depth, self.left.depth)
     
     def _convert_value(val):
