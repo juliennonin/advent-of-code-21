@@ -1,5 +1,5 @@
 # %%
-from collections import defaultdict
+import numpy as np
 
 # %%
 def wrap(n, a=1, b=10):
@@ -21,30 +21,32 @@ def determinist_roll(pos1, pos2):
     return min(scores) * 3 * n
 
 #%%
-def new_roll(L):
-    """
-    Args:
-        L (list): L[k-1] containts a dict(score -> n_score) that counts the number
-            of possible scores knowing that the player is currently on space k
+def roll_rows(A, shifts):
+    """thanks @seberg https://stackoverflow.com/a/20361561/13410397"""
+    n, m = A.shape
+    shifts = np.array(shifts)
+    assert shifts.ndim == 1 and n == len(shifts)
+    rows, col_indices = np.ogrid[:n, :m]
+    shifts[shifts < 0] += m
+    col_indices = col_indices - shifts[:, np.newaxis]
+    return A[rows, col_indices]
 
-    Returns:
-        T (list): updated L after one turn
-    """
-    MAX_SCORE = 21
-    large_scores_counts = 0
-    roll_outcomes = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)]  # (sum of 3 dice, occurences)
-    T = [defaultdict(int) for _ in range(10)]
-    for pos, scores in enumerate(L, start=1):
-        for roll, roll_counts in roll_outcomes:
-            new_pos = wrap(pos + roll)
-            for current_score, score_counts in scores.items():
-                new_score = current_score + new_pos
-                new_score_counts = score_counts * roll_counts
-                if new_score >= MAX_SCORE:
-                    large_scores_counts += new_score_counts
-                else:
-                    T[new_pos - 1][new_score] += score_counts * roll_counts
-    return large_scores_counts, T
+def roll_dice(A, N=3):
+    for _ in range(N):
+        A = np.roll(A, 1, axis=0) + np.roll(A, 2, axis=0) + np.roll(A, 3, axis=0)
+    return A
+
+def score_position(A):
+    n, m = A.shape
+    ## 1. Extract the scores that will be greater than m
+    x, y = np.tril_indices(n)
+    y = m - y - 1
+    n_finished_games = np.sum(A[x, y])
+    A[x, y] = 0
+    ## 2. Add the current position to the current scores
+    ## that is, shift each row nb k, k+1 steps to the right 
+    A = roll_rows(A, np.arange(1, n+1))
+    return A, n_finished_games
 
 def play(initial_pos):
     """
@@ -55,19 +57,19 @@ def play(initial_pos):
         W (list): W[n] is the number of universes where the score of
             the player becomes larger than 21 at the n-th move
         R (list): R[n] is the number of universes where the score of
-            the player is till below than 21 after the n-th move
+            the player is still below than 21 after the n-th move
     """
-    assert 1 <= initial_pos <= 10
-    L = [defaultdict(int) for _ in range(10)]
-    L[initial_pos - 1][0] = 1
-
-    W = [0]
-    R = [1]
+    MAX_SCORE, N_ROLL, N_SPACE = 21, 3, 10
     
-    while R[-1] != 0:
-        large_scores_counts, L = new_roll(L)
-        W.append(large_scores_counts)
-        R.append(27 * R[-1] - large_scores_counts)  # 27 times more universes
+    A = np.zeros((N_SPACE, MAX_SCORE), dtype=int)
+    # A[k, i] contains the number of scores i achievable at space k+1
+    A[initial_pos - 1, 0] = 1
+    W, R = [0], [1]
+    while np.any(A):
+        A = roll_dice(A, N_ROLL)
+        A, w = score_position(A)
+        W.append(w)
+        R.append((3 ** N_ROLL) * R[-1] - w)
     return W, R
 
 def compute_wins_number(pos1, pos2):
@@ -75,7 +77,7 @@ def compute_wins_number(pos1, pos2):
     W2, L2 = play(pos2)
     n = min(len(W1), len(W2))
     s1, s2 = 0, 0 # number of wins of players 1 & 2
-    for i in range(n-1):
+    for i in range(n - 1):
         s1 += W1[i+1] * L2[i]
         s2 += W2[i] * L1[i]
     return s1, s2
